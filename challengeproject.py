@@ -10,6 +10,7 @@ def main():
     layer_df['covering'] = polys.apply(compute_covering)
     grade_dictionary = assign_grade(layer_df)
     write_to_csv(grade_dictionary)
+    print("done")
 
 def read_gdb(file, layer_name):
     layer = gpd.read_file(file, layer=layer_name)
@@ -34,7 +35,7 @@ def assign_grade(layer_df):
         grade = row.grade
         covering = row.covering
         for cell in covering:
-            cell_id=cell.id()
+            cell_id=hex(cell.id())
             old_grade = dictionary.get(cell_id, "Z")
             dictionary[cell_id] = min(grade, old_grade)
     return dictionary
