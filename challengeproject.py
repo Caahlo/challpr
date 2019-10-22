@@ -30,7 +30,7 @@ def compute_covering(s2polygon):
 
 def assign_grade(layer_df):
     dictionary = {}
-    for i ,row in layer_df.iterrows():#nobody wants i, it plays an important role nonetheless so leave it be!
+    for _, row in layer_df.iterrows():#the underscore stands for an unused variable
         grade = row.grade
         covering = row.covering
         for cell in covering:
