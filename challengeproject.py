@@ -1,5 +1,5 @@
 import itertools
-
+import csv
 import geopandas as gpd
 import s2_py as s2
 from shapely.geometry import polygon as shapely_polygon, MultiPolygon as shapely_MultiPolygon
@@ -7,15 +7,9 @@ from shapely.geometry import polygon as shapely_polygon, MultiPolygon as shapely
 def main():
     layer_df = read_gdb("Final_OeVGK_2018.gdb.zip", "oevgk18_2018_11_13_Tag")
     polys = convert(layer_df)
-    # for i, poly in polys.items():
-    #     print(i, poly.num_loops(), layer.geometry[i].geom_type)
-    #     compute_covering(poly)
     layer_df['covering'] = polys.apply(compute_covering)
-    print(layer_df)
-    print(assign_grade(layer_df))
-    #covering = compute_covering(poly)
-    #print(covering[0].ToLatLng())
-    #print(covering[0].id())
+    grade_dictionary = assign_grade(layer_df)
+    write_to_csv(grade_dictionary)
 
 def read_gdb(file, layer_name):
     layer = gpd.read_file(file, layer=layer_name)
@@ -24,9 +18,7 @@ def read_gdb(file, layer_name):
     return layer
 
 def convert(layer_df):
-    #return [s2poly(multipolygon) for multipolygon in layer.geometry]
     return layer_df.geometry.apply(s2anypoly)
-    # TODO: use builder on result
 
 def compute_covering(s2polygon):
     coverer = s2.S2RegionCoverer()
@@ -38,7 +30,7 @@ def compute_covering(s2polygon):
 
 def assign_grade(layer_df):
     dictionary = {}
-    for i, row in layer_df.iterrows():
+    for i ,row in layer_df.iterrows():#nobody wants i, it plays an important role nonetheless so leave it be!
         grade = row.grade
         covering = row.covering
         for cell in covering:
@@ -47,6 +39,10 @@ def assign_grade(layer_df):
             dictionary[cell_id] = min(grade, old_grade)
     return dictionary
 
+def write_to_csv(dictionary):
+    with open('oev-grades.csv', 'w') as csv_file:
+        for key in dictionary.keys():
+            csv_file.write("%s,%s\n"%(key,dictionary[key]))
 
 def s2anypoly(geom):
     if type(geom) is shapely_MultiPolygon:
@@ -80,10 +76,6 @@ def s2singlepoly(polygon) -> s2.S2Polygon:  # a S2 "Polygon" can represent an OG
     result = s2.S2Polygon()
     result.InitNested(s2loops)
     return result
-
-#def s2singlepoly(polygon_unoriented) -> s2.S2Polygon:
-#    result = s2.S2Polygon()
-#    result.InitNested(extract_rings(polygon_unoriented))
 
 def extract_rings(polygon_unoriented):
     polygon_oriented = shapely_polygon.orient(polygon_unoriented, 1.0)
