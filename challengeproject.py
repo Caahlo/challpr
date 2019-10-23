@@ -5,12 +5,20 @@ import s2_py as s2
 from shapely.geometry import polygon as shapely_polygon, MultiPolygon as shapely_MultiPolygon
 
 def main():
-    layer_df = read_gdb("Final_OeVGK_2018.gdb.zip", "oevgk18_2018_11_13_Tag")
+    converter("oevgk18_2018_11_13_Tag", "werktag_tag_grades.csv")
+    converter("oevgk18_2018_11_13_Abend", "werktag_abend_grades.csv")
+    converter("oevgk18_2018_11_10_Tag", "samstag_tag_grades.csv")
+    converter("oevgk18_2018_11_10_Nacht", "samstag_nacht_grades.csv")
+    converter("oevgk18_2018_11_18_Tag", "sonntag_tag_grades.csv")
+    converter("oevgk18_2018_11_18_Nacht", "sonntag_nacht_grades.csv")
+
+def converter(layer, csv_file):
+    layer_df = read_gdb("Final_OeVGK_2018.gdb.zip", layer)
     polys = convert(layer_df)
     layer_df['covering'] = polys.apply(compute_covering)
     grade_dictionary = assign_grade(layer_df)
-    write_to_csv(grade_dictionary)
-    print("done")
+    write_to_csv(grade_dictionary, csv_file)
+    print("converted "+layer)
 
 def read_gdb(file, layer_name):
     layer = gpd.read_file(file, layer=layer_name)
@@ -40,8 +48,8 @@ def assign_grade(layer_df):
             dictionary[cell_id] = min(grade, old_grade)
     return dictionary
 
-def write_to_csv(dictionary):
-    with open('oev-grades.csv', 'w') as csv_file:
+def write_to_csv(dictionary,output):
+    with open(output, 'w') as csv_file:
         for key in dictionary.keys():
             csv_file.write("%s,%s\n"%(key,dictionary[key]))
 
