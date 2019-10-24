@@ -1,9 +1,11 @@
+###VSCode###
+.vscode/
+
+###venv###
+venv/
 
 # Created by https://www.gitignore.io/api/python
 # Edit at https://www.gitignore.io/?templates=python
-
-###VSCode###
-.vscode/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
