@@ -5,15 +5,15 @@ import s2_py as s2
 from shapely.geometry import polygon as shapely_polygon, MultiPolygon as shapely_MultiPolygon
 
 def main():
-    converter("oevgk18_2018_11_13_Tag", "werktag_tag_grades.csv")
-    converter("oevgk18_2018_11_13_Abend", "werktag_abend_grades.csv")
-    converter("oevgk18_2018_11_10_Tag", "samstag_tag_grades.csv")
-    converter("oevgk18_2018_11_10_Nacht", "samstag_nacht_grades.csv")
-    converter("oevgk18_2018_11_18_Tag", "sonntag_tag_grades.csv")
-    converter("oevgk18_2018_11_18_Nacht", "sonntag_nacht_grades.csv")
+    converter("oevgk18_2018_11_13_Tag", "data/output/werktag_tag_grades.csv")
+    converter("oevgk18_2018_11_13_Abend", "data/output/werktag_abend_grades.csv")
+    converter("oevgk18_2018_11_10_Tag", "data/output/samstag_tag_grades.csv")
+    converter("oevgk18_2018_11_10_Nacht", "data/output/samstag_nacht_grades.csv")
+    converter("oevgk18_2018_11_18_Tag", "data/output/sonntag_tag_grades.csv")
+    converter("oevgk18_2018_11_18_Nacht", "data/output/sonntag_nacht_grades.csv")
 
 def converter(layer, csv_file):
-    layer_df = read_gdb("Final_OeVGK_2018.gdb.zip", layer)
+    layer_df = read_gdb("data/input/Final_OeVGK_2018.gdb.zip", layer)
     polys = convert(layer_df)
     layer_df['covering'] = polys.apply(compute_covering)
     grade_dictionary = assign_grade(layer_df)
