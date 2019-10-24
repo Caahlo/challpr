@@ -43,7 +43,7 @@ def assign_grade(layer_df):
         grade = row.grade
         covering = row.covering
         for cell in covering:
-            cell_id=hex(cell.id())
+            cell_id=format(cell.id(),'0>16x')
             old_grade = dictionary.get(cell_id, "Z")
             dictionary[cell_id] = min(grade, old_grade)
     return dictionary
