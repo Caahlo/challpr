@@ -1,11 +1,6 @@
 # ÖV-Güteklassen to S2 Converter
 
-This project converts a GeoDB file containing polygons and their public transport grades into a csv file containing s2cells and their grade. For more information about s2cells see : https://github.com/google/s2geometry or http://s2geometry.io/. The cellIDs, which are the first value, can be inserted into https://s2.sidewalklabs.com/regioncoverer/ in order to show them on a map. Be sure to insert hex values since the website does not work for dec or bin numbers.
+This project converts a file that contains geodataframes into a csv file that contains s2 cells and their respective grade. For more information about s2cells see [The google s2geometry library](https://github.com/google/s2geometry) or [The s2geometry Website](http://s2geometry.io/). The cellIDs from the output file can be inserted into [The Sidewalklabs region coverer](https://s2.sidewalklabs.com/regioncoverer/) in order to show them on the world map. Note that the standard base for the s2 cell IDs is hexadecimal.
 
-The python-program was run in the venv folder so it should contain all required libraries.
-
-The Final_OeVGK_2018.gdb.zip contains all the data needed. For now only one of six layers was used.
-
-The program itself is in the challengeproject.py file.
-
-The output of the program is saved in the oev-grades.csv file.
+The src folder contains two python scripts. The ```challengeproject.py``` file is used to convert any file that contains geoframes which themselves contain at least the two attributes geometry and grade into a csv file. The csv file contains every s2 cell partially or fully contained in the multipolygons from the input file. The layers that are to be converted must be specified in the source code. The coordinates from the original file are automatically converted to GPS coordinates (epsg: 4326).
+The ```s2cell_to_lnglat.py```file can be run as script int the console in two different ways. The first possibility is to type ```python s2cell_to_lnglat.py <s2cell_id>```. If done this way the script returns a single coordinate pair that lies in the center of the s2 cell . The second possibility is to simply type in ```python s2cell_to_lnglat.py``` and after that repeatedly type in an s2 cell ID. After every input the script returns the respective coordinate pair of the s2 cell.
